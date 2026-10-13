@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ error.code }}{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="display-6 fw-bold">{{ 'Page not found' if error.code == 404 else 'You can\'t do that' if error.code == 403 else 'Something went wrong' }}</h1>
+  <p class="text-secondary">{{ error.description if error.code != 404 else 'That page doesn\'t exist or was removed.' }}</p>
+  <a class="btn btn-dark" href="{{ url_for('index') }}">Back to home</a>
+</div>
+{% endblock %}

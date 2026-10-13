@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_form, deadline_badge with context %}
+{% set o = rec.opportunity %}
+{% block title %}{{ o.title }}{% endblock %}
+{% block content %}
+<a class="small" href="{{ url_for('dashboard') }}">Back to my matches</a>
+<div class="row g-4 mt-1">
+  <div class="col-lg-8">
+    <div class="pills mb-2"><span class="pill pill-cat">{{ o.category }}</span><span class="pill">{{ o.level }}</span>{{ deadline_badge(o) }}{% if status %}<span class="pill pill-state">{{ STATUSES[status] }}</span>{% endif %}</div>
+    <h1 class="h2">{{ o.title }}</h1>
+    <div class="meta mb-3"><span>{{ o.mode }}</span><span>{{ o.duration or 'Flexible' }}</span><span>{{ o.cost }}</span>{% if o.deadline %}<span>Deadline {{ o.deadline.strftime('%d %b %Y') }}</span>{% endif %}</div>
+    <p class="lead text-secondary">{{ o.description }}</p>
+    {% if o.url %}<a class="btn btn-dark" href="{{ o.url }}" target="_blank" rel="noopener noreferrer">Open the resource</a>{% endif %}
+
+    {% if rec.blockers %}
+    <div class="feature-card mt-4 rec-locked"><h2 class="h5">Not open to you yet</h2><ul class="reason-list blockers mb-0">{% for b in rec.blockers %}<li>{{ b }}</li>{% endfor %}</ul></div>
+    {% endif %}
+
+    <div class="feature-card mt-4">
+      <h2 class="h5">Personal fit analysis</h2>
+      <p class="text-secondary small">Generated on this computer from your profile and this opportunity.</p>
+      <div id="fit-output" class="fit-output" aria-live="polite"></div>
+      <button class="btn btn-outline-dark" id="fit-btn" data-url="{{ url_for('api_fit', opp_id=o.id) }}">Analyse my fit</button>
+    </div>
+
+    <div class="feature-card mt-4">
+      <h2 class="h5">Why it scored {{ rec.score }}</h2>
+      {% for key, label in [('semantic','Topic similarity (TF-IDF)'),('interests','Interest overlap'),('skills','Skills you already have'),('goal','Career goal alignment'),('level','Level fits your semester')] %}
+      <div class="bar-row"><span>{{ label }}</span><div class="bar"><div style="width: {{ (rec.components[key] * 100)|round|int }}%"></div></div><span class="small text-secondary">{{ (rec.components[key] * 100)|round|int }}%</span></div>
+      {% endfor %}
+      {% if rec.peers %}<p class="small text-secondary mt-3 mb-0">{{ rec.peers }} other {{ current_user.branch }} student{{ 's' if rec.peers > 1 }} saved this, which adds a small boost.</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="feature-card">
+      <div class="d-flex align-items-center gap-3 mb-3"><div class="ring ring-lg" style="--p:{{ rec.score }}" role="img" aria-label="{{ rec.score }} percent match"><span>{{ rec.score }}</span></div><div><div class="fw-bold">Match for you</div><div class="small text-secondary">Heuristic score out of 100</div></div></div>
+      <ul class="reason-list">{% for reason in rec.reasons %}<li>{{ reason }}</li>{% endfor %}</ul>
+      {% if rec.matched_skills %}<div class="small fw-bold mt-3 mb-1">You already have</div><div class="d-flex flex-wrap gap-1">{% for s in rec.matched_skills %}<span class="tag tag-have">{{ s }}</span>{% endfor %}</div>{% endif %}
+      {% if rec.missing_skills %}<div class="small fw-bold mt-3 mb-1">You'd build</div><div class="d-flex flex-wrap gap-1">{% for s in rec.missing_skills %}<span class="tag">{{ s }}</span>{% endfor %}</div>{% endif %}
+    </div>
+    <div class="feature-card mt-3">
+      <h2 class="h6">Track it</h2>
+      <div class="d-flex flex-wrap gap-2">
+        {% for key in ['saved', 'in_progress', 'completed'] %}{{ status_form(o, key, STATUSES[key], 'btn-dark' if status == key else 'btn-outline-dark') }}{% endfor %}
+        {% if status %}{{ status_form(o, 'remove', 'Remove', 'btn-link text-secondary') }}{% endif %}
+        {% if status != 'dismissed' %}{{ status_form(o, 'dismissed', 'Not for me', 'btn-link text-secondary') }}{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Advisor{% endblock %}
+{% block content %}
+<div class="mx-auto" style="max-width:760px">
+  <h1 class="h2 mb-1">Ask the advisor</h1>
+  <p class="text-secondary mb-3">Answers are generated locally from your profile and the catalogue. Always verify requirements with the provider.</p>
+  <div class="d-flex flex-wrap gap-2 mb-3" id="suggestions">
+    <button type="button" class="chip" data-prompt="What should I focus on this semester?">What should I focus on this semester?</button>
+    <button type="button" class="chip" data-prompt="Which of my matches is best for getting an internship?">Best match for an internship?</button>
+    <button type="button" class="chip" data-prompt="Which skill should I learn first, and why?">Which skill first?</button>
+  </div>
+  <div class="chat" id="chat" aria-live="polite"></div>
+  <form id="chat-form" class="d-flex gap-2 mt-3" data-url="{{ url_for('api_advisor') }}">
+    <input class="form-control" id="chat-input" maxlength="1000" placeholder="Ask about courses, skills or careers" autocomplete="off" required>
+    <button class="btn btn-dark" id="chat-send">Send</button>
+  </form>
+</div>
+{% endblock %}

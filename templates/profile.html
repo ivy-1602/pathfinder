@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Your profile{% endblock %}
+{% block content %}
+<div class="form-wrap mx-auto">
+  <h1 class="h2 mb-1">Your profile</h1>
+  <p class="text-secondary mb-4">Matches update as soon as you save. Add skills as you learn them to see the "You'd build" lists shrink.</p>
+  <form method="post" class="feature-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="row g-3">{% include "_profile_fields.html" %}</div>
+    <button class="btn btn-dark btn-lg w-100 mt-4" type="submit">Save profile</button>
+  </form>
+</div>
+{% endblock %}

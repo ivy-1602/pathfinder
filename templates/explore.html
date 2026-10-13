@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_macros.html" import rec_card with context %}
+{% block title %}Explore{% endblock %}
+{% block content %}
+<h1 class="h2 mb-1">Explore the catalogue</h1>
+<p class="text-secondary mb-4">Everything in the catalogue, scored for you. Locked items show what's missing.</p>
+<form method="get" class="feature-card mb-4">
+  <div class="row g-2 align-items-end">
+    <div class="col-lg-4"><label class="form-label small" for="q">Search</label><input class="form-control" id="q" name="q" value="{{ f.q }}" placeholder="python, hackathon, figma"></div>
+    <div class="col-6 col-lg-2"><label class="form-label small" for="category">Category</label>
+      <select class="form-select" id="category" name="category"><option value="">Any</option>{% for c in CATEGORIES %}<option {{ 'selected' if f.category == c }}>{{ c }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-lg-2"><label class="form-label small" for="level">Level</label>
+      <select class="form-select" id="level" name="level"><option value="">Any</option>{% for c in LEVELS %}<option {{ 'selected' if f.level == c }}>{{ c }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-lg-1"><label class="form-label small" for="cost">Cost</label>
+      <select class="form-select" id="cost" name="cost"><option value="">Any</option>{% for c in COSTS %}<option {{ 'selected' if f.cost == c }}>{{ c }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-lg-1"><label class="form-label small" for="mode">Mode</label>
+      <select class="form-select" id="mode" name="mode"><option value="">Any</option>{% for c in MODES %}<option {{ 'selected' if f.mode == c }}>{{ c }}</option>{% endfor %}</select></div>
+    <div class="col-lg-2 d-flex gap-2 align-items-center">
+      <div class="form-check mb-0"><input class="form-check-input" type="checkbox" id="eligible" name="eligible" value="1" {{ 'checked' if f.eligible }}><label class="form-check-label small" for="eligible">Eligible only</label></div>
+      <button class="btn btn-dark ms-auto">Filter</button>
+    </div>
+  </div>
+</form>
+<p class="text-secondary">{{ recs|length }} result{{ '' if recs|length == 1 else 's' }}</p>
+{% if recs %}
+<div class="row g-3">{% for r in recs %}<div class="col-lg-6">{{ rec_card(r, statuses, request.full_path) }}</div>{% endfor %}</div>
+{% else %}
+<div class="feature-card"><h2 class="h5">Nothing matches those filters</h2><p class="text-secondary mb-0">Clear a filter or search for a broader word. <a href="{{ url_for('explore') }}">Reset all filters</a></p></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% set branches = ['AIML','Computer Engineering','IT','ENTC','Mechanical','Civil','Other'] %}
+{% set goals = ['AI/ML Engineer','Data Scientist','Software Developer','Cybersecurity Analyst','UI/UX Designer','Researcher','Not sure yet'] %}
+<div class="col-md-6"><label class="form-label" for="branch">Branch</label>
+  <select class="form-select" id="branch" name="branch" required>
+    {% for b in branches %}<option value="{{ b }}" {% if v.get('branch', 'AIML') == b %}selected{% endif %}>{{ b }}</option>{% endfor %}
+  </select></div>
+<div class="col-6 col-md-3"><label class="form-label" for="semester">Semester</label><input class="form-control" id="semester" name="semester" type="number" min="1" max="12" required value="{{ v.get('semester', '3') }}"></div>
+<div class="col-6 col-md-3"><label class="form-label" for="cgpa">CGPA out of 10</label><input class="form-control" id="cgpa" name="cgpa" type="number" min="0" max="10" step="0.01" required value="{{ v.get('cgpa', '8.5') }}"></div>
+<div class="col-12"><label class="form-label" for="interests">Interests</label><input class="form-control" id="interests" name="interests" required maxlength="500" placeholder="AI, machine learning, data science" value="{{ v.get('interests', '') }}"><div class="form-text">Separate with commas. Shorthand like ML, NLP or UI/UX is understood.</div></div>
+<div class="col-12"><label class="form-label" for="skills">Skills you already have <span class="text-muted">(optional)</span></label><input class="form-control" id="skills" name="skills" maxlength="500" placeholder="Python, SQL, HTML" value="{{ v.get('skills', '') }}"></div>
+<div class="col-12"><label class="form-label" for="career_goal">Career goal</label>
+  <select class="form-select" id="career_goal" name="career_goal" required>
+    {% for g in goals %}<option value="{{ g }}" {% if v.get('career_goal', 'AI/ML Engineer') == g %}selected{% endif %}>{{ g }}</option>{% endfor %}
+  </select></div>

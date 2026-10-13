@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Roadmap{% endblock %}
+{% block content %}
+<h1 class="h2 mb-1">Your roadmap</h1>
+<p class="text-secondary mb-4">A phased plan for {{ current_user.career_goal }}, sized to the time you have.</p>
+<form method="post" class="feature-card mb-4" id="roadmap-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <div class="row g-3 align-items-end">
+    <div class="col-sm-4"><label class="form-label" for="weeks">Timeline</label>
+      <select class="form-select" id="weeks" name="weeks">{% for w in [4, 8, 12, 16, 24] %}<option value="{{ w }}" {{ 'selected' if (latest.weeks if latest else 12) == w }}>{{ w }} weeks</option>{% endfor %}</select></div>
+    <div class="col-sm-4"><label class="form-label" for="hours">Hours per week</label><input class="form-control" id="hours" name="hours" type="number" min="2" max="40" value="{{ latest.hours_per_week if latest else 6 }}"></div>
+    <div class="col-sm-4"><button class="btn btn-dark w-100" type="submit">{{ 'Generate a new roadmap' if data else 'Generate my roadmap' }}</button></div>
+  </div>
+  <p class="small text-muted mt-3 mb-0">The plan is built locally from your top eligible matches.</p>
+</form>
+
+{% if data %}
+<div class="feature-card mb-4">
+  <div class="d-flex flex-wrap justify-content-between gap-2 mb-2"><h2 class="h5 mb-0">{{ latest.weeks }} weeks at {{ latest.hours_per_week }} hours a week</h2><span class="pill">Generated plan</span></div>
+  <p class="mb-3">{{ data.summary }}</p>
+  {% if data.skills_to_build %}<div class="d-flex flex-wrap gap-2">{% for s in data.skills_to_build %}<span class="tag tag-lg">{{ s }}</span>{% endfor %}</div>{% endif %}
+</div>
+<ol class="timeline">
+{% for p in data.phases %}
+  <li>
+    <div class="timeline-card">
+      <div class="small text-secondary">{{ p.weeks }}</div>
+      <h3 class="h5">{{ p.title }}</h3>
+      <p class="text-secondary">{{ p.goal }}</p>
+      <ul class="reason-list">{% for t in p.tasks %}<li>{{ t }}</li>{% endfor %}</ul>
+      {% if p.milestone %}<div class="milestone"><strong>Milestone:</strong> {{ p.milestone }}</div>{% endif %}
+      {% if p.resource_ids %}<div class="d-flex flex-wrap gap-2 mt-3">{% for rid in p.resource_ids %}{% if rid in opps %}<a class="btn btn-sm btn-outline-dark" href="{{ url_for('opportunity', opp_id=rid) }}">{{ opps[rid].title }}</a>{% endif %}{% endfor %}</div>{% endif %}
+    </div>
+  </li>
+{% endfor %}
+</ol>
+{% endif %}
+{% endblock %}

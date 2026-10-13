@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="form-wrap mx-auto" style="max-width:460px">
+  <h1 class="h2 mb-4">Log in</h1>
+  <form method="post" class="feature-card">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label class="form-label" for="email">Email</label>
+    <input class="form-control mb-3" id="email" name="email" type="email" required autocomplete="email" autofocus>
+    <label class="form-label" for="password">Password</label>
+    <input class="form-control mb-4" id="password" name="password" type="password" required autocomplete="current-password">
+    <button class="btn btn-dark w-100" type="submit">Log in</button>
+    <p class="small text-muted mt-3 mb-0">New here? <a href="{{ url_for('register') }}">Create a profile</a>.</p>
+  </form>
+</div>
+{% endblock %}

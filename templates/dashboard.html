@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "_macros.html" import rec_card with context %}
+{% block title %}My matches{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
+  <div>
+    <h1 class="h2 mb-1">Hi {{ current_user.first_name }}, here's what fits you now.</h1>
+    <p class="text-secondary mb-0">{{ current_user.branch }}, semester {{ current_user.semester }}, CGPA {{ '%.2f'|format(current_user.cgpa) }}, aiming for {{ current_user.career_goal }}</p>
+  </div>
+  <div class="d-flex gap-2"><a class="btn btn-outline-dark" href="{{ url_for('profile') }}">Edit profile</a><a class="btn btn-dark" href="{{ url_for('roadmap') }}">Build my roadmap</a></div>
+</div>
+
+<div class="stat-row mb-4">
+  <div class="stat-card"><div class="stat-number">{{ total }}</div><div class="text-secondary">eligible matches</div></div>
+  <div class="stat-card"><div class="stat-number">{{ counts.get('saved', 0) }}</div><div class="text-secondary">saved</div></div>
+  <div class="stat-card"><div class="stat-number">{{ counts.get('in_progress', 0) }}</div><div class="text-secondary">in progress</div></div>
+  <div class="stat-card"><div class="stat-number">{{ counts.get('completed', 0) }}</div><div class="text-secondary">completed</div></div>
+</div>
+
+{% if gaps %}
+<section class="gap-strip mb-4">
+  <div class="fw-bold mb-1">Skills that would unlock the most of your top matches</div>
+  <div class="d-flex flex-wrap gap-2">{% for g in gaps %}<span class="tag tag-lg">{{ g }}</span>{% endfor %}</div>
+</section>
+{% endif %}
+
+{% if completeness < 100 %}
+<div class="nudge mb-4">Your profile is {{ completeness }}% complete. <a href="{{ url_for('profile') }}">Add more interests and skills</a> for sharper matches.</div>
+{% endif %}
+
+<form method="get" class="d-flex flex-wrap align-items-center gap-2 mb-3">
+  <a class="chip {{ 'active' if not category }}" href="{{ url_for('dashboard', sort=sort) }}">All</a>
+  {% for c in categories %}<a class="chip {{ 'active' if category == c }}" href="{{ url_for('dashboard', category=c, sort=sort) }}">{{ c }}</a>{% endfor %}
+  <div class="ms-auto d-flex align-items-center gap-2">
+    <label class="small text-secondary" for="sort">Sort by</label>
+    {% if category %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+    <select class="form-select form-select-sm w-auto" id="sort" name="sort" onchange="this.form.submit()">
+      <option value="match" {{ 'selected' if sort == 'match' }}>Best match</option>
+      <option value="deadline" {{ 'selected' if sort == 'deadline' }}>Closing soonest</option>
+      <option value="title" {{ 'selected' if sort == 'title' }}>Title</option>
+    </select>
+  </div>
+</form>
+
+{% if recs %}
+<div class="row g-3">{% for r in recs %}<div class="col-lg-6">{{ rec_card(r, statuses, request.full_path) }}</div>{% endfor %}</div>
+{% else %}
+<div class="feature-card"><h2 class="h5">No matches in this view</h2><p class="text-secondary mb-0">Try another category, or <a href="{{ url_for('profile') }}">add more interests and skills</a>. Items you hid are in <a href="{{ url_for('plan') }}">My plan</a>.</p></div>
+{% endif %}
+
+{% if near %}
+<h2 class="h4 mt-5 mb-1">Within reach</h2>
+<p class="text-secondary">These aren't open to you yet, but you're close.</p>
+<div class="row g-3">{% for r in near %}<div class="col-lg-6">{{ rec_card(r, statuses, request.full_path) }}</div>{% endfor %}</div>
+{% endif %}
+<p class="small text-muted mt-4">Match scores are heuristic indicators, not probabilities of admission, selection or success.</p>
+{% endblock %}

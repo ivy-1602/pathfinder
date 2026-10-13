@@ -1,0 +1,45 @@
+{% macro status_form(o, value, label, css='btn-outline-dark', next_url='') %}
+<form method="post" action="{{ url_for('set_status', opp_id=o.id) }}" class="d-inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <input type="hidden" name="next" value="{{ next_url }}">
+  <input type="hidden" name="status" value="{{ value }}">
+  <button class="btn btn-sm {{ css }}">{{ label }}</button>
+</form>
+{% endmacro %}
+
+{% macro deadline_badge(o) %}
+{% if o.deadline %}<span class="pill {{ 'pill-warn' if o.days_left <= 7 else '' }}">{% if o.days_left == 0 %}Closes today{% elif o.days_left == 1 %}Closes tomorrow{% else %}{{ o.days_left }} days left{% endif %}</span>{% endif %}
+{% endmacro %}
+
+{% macro rec_card(r, statuses, next_url='') %}
+{% set o = r.opportunity %}{% set st = statuses.get(o.id) %}
+<article class="rec h-100 {{ 'rec-locked' if not r.eligible }}">
+  <div class="d-flex justify-content-between align-items-start gap-3">
+    <div>
+      <div class="pills mb-2">
+        <span class="pill pill-cat">{{ o.category }}</span><span class="pill">{{ o.level }}</span>
+        {{ deadline_badge(o) }}
+        {% if not r.eligible %}<span class="pill pill-lock">Locked</span>{% endif %}
+        {% if st %}<span class="pill pill-state">{{ STATUSES[st] }}</span>{% endif %}
+      </div>
+      <h3 class="rec-title"><a href="{{ url_for('opportunity', opp_id=o.id) }}">{{ o.title }}</a></h3>
+    </div>
+    <div class="ring" style="--p:{{ r.score }}" role="img" aria-label="{{ r.score }} percent match"><span>{{ r.score }}</span></div>
+  </div>
+  <p class="text-secondary mt-2 mb-2">{{ o.description }}</p>
+  <div class="meta mb-3"><span>{{ o.mode }}</span><span>{{ o.duration or 'Flexible' }}</span><span>{{ o.cost }}</span></div>
+  {% if r.blockers %}
+    <ul class="reason-list blockers">{% for b in r.blockers %}<li>{{ b }}</li>{% endfor %}</ul>
+  {% else %}
+    <ul class="reason-list">{% for reason in r.reasons[:3] %}<li>{{ reason }}</li>{% endfor %}</ul>
+    {% if r.missing_skills %}<div class="build"><span class="build-label">You'd build</span>{% for s in r.missing_skills[:4] %}<span class="tag">{{ s }}</span>{% endfor %}</div>{% endif %}
+  {% endif %}
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-sm btn-dark" href="{{ url_for('opportunity', opp_id=o.id) }}">View details</a>
+    {% if st == 'saved' %}{{ status_form(o, 'remove', 'Saved', 'btn-success', next_url) }}
+    {% elif st in ('in_progress', 'completed') %}{# already in the plan #}
+    {% else %}{{ status_form(o, 'saved', 'Save', 'btn-outline-dark', next_url) }}{% endif %}
+    {% if st != 'dismissed' and st not in ('in_progress', 'completed') %}{{ status_form(o, 'dismissed', 'Not for me', 'btn-link text-secondary', next_url) }}{% endif %}
+  </div>
+</article>
+{% endmacro %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<h1 class="h2 mb-4">Admin</h1>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <form method="post" action="{{ url_for('admin_add_opportunity') }}" class="feature-card">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <h2 class="h5 mb-3">Add an opportunity</h2>
+      <div class="row g-2">
+        <div class="col-12"><label class="form-label small" for="title">Title</label><input class="form-control" id="title" name="title" required maxlength="160"></div>
+        <div class="col-6"><label class="form-label small" for="a-category">Category</label><select class="form-select" id="a-category" name="category">{% for c in CATEGORIES %}<option>{{ c }}</option>{% endfor %}</select></div>
+        <div class="col-6"><label class="form-label small" for="a-level">Level</label><select class="form-select" id="a-level" name="level">{% for c in LEVELS %}<option>{{ c }}</option>{% endfor %}</select></div>
+        <div class="col-12"><label class="form-label small" for="description">Description</label><textarea class="form-control" id="description" name="description" rows="3" required></textarea></div>
+        <div class="col-12"><label class="form-label small" for="tags">Tags (comma-separated)</label><input class="form-control" id="tags" name="tags" placeholder="python, machine learning"></div>
+        <div class="col-4"><label class="form-label small" for="a-mode">Mode</label><select class="form-select" id="a-mode" name="mode">{% for c in MODES %}<option>{{ c }}</option>{% endfor %}</select></div>
+        <div class="col-4"><label class="form-label small" for="a-cost">Cost</label><select class="form-select" id="a-cost" name="cost">{% for c in COSTS %}<option>{{ c }}</option>{% endfor %}</select></div>
+        <div class="col-4"><label class="form-label small" for="duration">Duration</label><input class="form-control" id="duration" name="duration" placeholder="6 weeks"></div>
+        <div class="col-4"><label class="form-label small" for="min_cgpa">Min CGPA</label><input class="form-control" id="min_cgpa" name="min_cgpa" type="number" step="0.1" min="0" max="10"></div>
+        <div class="col-4"><label class="form-label small" for="min_semester">Min semester</label><input class="form-control" id="min_semester" name="min_semester" type="number" min="1" max="12"></div>
+        <div class="col-4"><label class="form-label small" for="deadline">Deadline</label><input class="form-control" id="deadline" name="deadline" type="date"></div>
+        <div class="col-12"><label class="form-label small" for="branches">Branches (blank = any)</label><input class="form-control" id="branches" name="branches" placeholder="AIML,IT"></div>
+        <div class="col-12"><label class="form-label small" for="url">Link</label><input class="form-control" id="url" name="url" type="url" placeholder="https://"></div>
+      </div>
+      <button class="btn btn-dark w-100 mt-3">Add opportunity</button>
+    </form>
+  </div>
+  <div class="col-lg-7">
+    <div class="feature-card mb-4">
+      <h2 class="h5">Catalogue ({{ opportunities|length }})</h2>
+      <div class="table-responsive"><table class="table table-sm align-middle mb-0"><tbody>
+        {% for o in opportunities %}<tr><td>{{ o.title }}<div class="small text-secondary">{{ o.category }}{% if o.deadline %}, closes {{ o.deadline }}{% endif %}</div></td>
+          <td class="text-end"><form method="post" action="{{ url_for('admin_delete_opportunity', opp_id=o.id) }}" onsubmit="return confirm('Delete this opportunity for everyone?')"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-sm btn-link text-danger">Delete</button></form></td></tr>{% endfor %}
+      </tbody></table></div>
+    </div>
+    <div class="feature-card">
+      <h2 class="h5">Students ({{ users|length }})</h2>
+      <div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Name</th><th>Branch</th><th>Sem</th><th>CGPA</th></tr></thead><tbody>
+        {% for u in users %}<tr><td>{{ u.name }}</td><td>{{ u.branch }}</td><td>{{ u.semester }}</td><td>{{ '%.2f'|format(u.cgpa) }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
