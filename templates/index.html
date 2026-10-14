@@ -1,37 +1,51 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<section class="hero p-4 p-md-5 mb-4">
-  <div class="row align-items-center g-4">
-    <div class="col-lg-7">
-      <h1 class="display-5 mb-3">Know what to learn next, and why.</h1>
-      <p class="lead text-secondary">Tell PathFinder your branch, semester, CGPA and goals. It ranks electives, courses, certifications, hackathons and programmes you're eligible for, shows the skills each one would build, and drafts a week-by-week plan with a built-in advisor.</p>
-      <div class="d-flex flex-wrap gap-2 mt-4">
+<section class="hero">
+  <div class="row align-items-center g-5">
+    <div class="col-lg-6">
+      <h1 class="hero-title">A <span class="accent">clearer</span> direction for every student.</h1>
+      <p class="lead text-secondary mt-4 mb-4">Tell Maarg your branch, semester, CGPA and goals. It ranks the electives, courses, certifications and hackathons you're eligible for, shows what each one would teach you, and turns it into a week-by-week plan.</p>
+      <div class="d-flex flex-wrap gap-3">
         {% if current_user %}
-          <a class="btn btn-dark btn-lg" href="{{ url_for('dashboard') }}">Open my matches</a>
+          <a class="btn btn-dark btn-lg btn-go" href="{{ url_for('dashboard') }}"><span class="go"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9m0 0L8.5 4.5M12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Open my matches</a>
         {% else %}
-          <a class="btn btn-dark btn-lg" href="{{ url_for('register') }}">Create my profile</a>
+          <a class="btn btn-dark btn-lg btn-go" href="{{ url_for('register') }}"><span class="go"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9m0 0L8.5 4.5M12 8l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Create my profile</a>
           <a class="btn btn-outline-dark btn-lg" href="{{ url_for('login') }}">Log in</a>
         {% endif %}
       </div>
+      <ul class="trust"><li>Free to use</li><li>Every score explained</li><li>No third-party AI APIs</li></ul>
     </div>
-    <div class="col-lg-5">
-      <div class="sample-card">
-        <div class="d-flex justify-content-between align-items-start gap-3">
-          <div><span class="pill pill-cat">Course</span><h2 class="h5 mt-2 mb-1">Hugging Face NLP and LLM Course</h2></div>
-          <div class="ring" style="--p:86" role="img" aria-label="86 percent match"><span>86</span></div>
+
+    <div class="col-lg-6">
+      <div class="stage" aria-label="Example of Maarg's matches">
+        <div class="float-card fc-skills drift-b">
+          <div class="mini-title">Skills you'd build</div>
+          <div class="d-flex flex-wrap gap-1"><span class="tag">transformers</span><span class="tag">generative ai</span><span class="tag">pytorch</span></div>
         </div>
-        <ul class="reason-list mt-2 mb-2"><li>Matches your interests: large language models</li><li>Relevant to your goal of becoming an AI/ML Engineer</li></ul>
-        <div class="build"><span class="build-label">You'd build</span><span class="tag">transformers</span><span class="tag">generative ai</span></div>
+        <div class="float-card fc-main drift-a">
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div><span class="pill pill-cat">Course</span><h2 class="h5 mt-2 mb-1">Hugging Face NLP and LLM Course</h2><div class="meta"><span>Online</span><span>5 weeks</span><span>Free</span></div></div>
+            <div class="ring" style="--p:86" role="img" aria-label="86 percent match"><span>86</span></div>
+          </div>
+          <ul class="reason-list mt-3 mb-0"><li>Matches your interests: large language models</li><li>Supports your goal: AI/ML Engineer</li><li>Intermediate level fits semester 4</li></ul>
+        </div>
+        <div class="float-card fc-plan drift-c">
+          <div class="mini-title">My plan</div>
+          <div class="d-flex justify-content-between small mb-1"><span>Python for Data Analysis</span><span class="text-secondary">3 of 5 weeks</span></div>
+          <div class="bar"><div style="width:60%"></div></div>
+        </div>
+        <div class="float-card fc-pill drift-a"><span class="dot"></span>Eligible: CGPA 7.0+ met</div>
       </div>
-      <p class="small text-muted mt-2 mb-0">An example of how a match is explained.</p>
+      <p class="small text-secondary text-center mt-2 mb-0">An example of how a match is explained.</p>
     </div>
   </div>
 </section>
-<div class="row g-3">
-  <div class="col-md-4"><div class="feature-card h-100"><h2 class="h5">Eligibility first</h2><p class="text-secondary mb-0">CGPA, semester and branch rules are hard filters. Options that are almost within reach are shown separately with what's missing.</p></div></div>
-  <div class="col-md-4"><div class="feature-card h-100"><h2 class="h5">Matching you can inspect</h2><p class="text-secondary mb-0">A TF-IDF text model plus skill, interest, goal and level signals. Every score breaks down into its parts.</p></div></div>
-  <div class="col-md-4"><div class="feature-card h-100"><h2 class="h5">Advisor and roadmap</h2><p class="text-secondary mb-0">Ask questions about your options, get a personal fit analysis, and generate a plan sized to the hours you actually have. All offline.</p></div></div>
+
+<div class="row g-3 mt-4">
+  <div class="col-md-4"><div class="feature-card h-100"><h2 class="h5">Eligibility first</h2><p class="text-secondary mb-0">CGPA, semester and branch rules are hard filters. Options that are almost within reach are shown separately, with what's missing.</p></div></div>
+  <div class="col-md-4"><div class="feature-card h-100"><h2 class="h5">Matching you can inspect</h2><p class="text-secondary mb-0">A TF-IDF text model plus skill, interest, goal and level signals. Open any score to see its parts.</p></div></div>
+  <div class="col-md-4"><div class="feature-card h-100"><h2 class="h5">Advisor and roadmap</h2><p class="text-secondary mb-0">Ask about your options, get a personal fit analysis, and generate a plan sized to the hours you actually have.</p></div></div>
 </div>
-<p class="small text-muted mt-4">{{ opportunity_count }} catalogue entries and {{ student_count }} student profiles on this instance. Catalogue entries are resources to explore, not confirmed vacancies.</p>
+<p class="small text-secondary mt-4 text-center">{{ opportunity_count }} catalogue entries and {{ student_count }} student profiles on this site. Entries are resources to explore, not confirmed vacancies.</p>
 {% endblock %}
